@@ -8,4 +8,6 @@ import matplotlib as mplib
 import seaborn
 
 if __name__ == '__main__':
+    filename = 'car_fuel_efficiency.csv'
 
+    car_df = pd.read_csv(filename)
