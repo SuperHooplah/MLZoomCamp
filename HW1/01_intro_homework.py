@@ -41,8 +41,8 @@ if __name__ == '__main__':
     print(f"Number of columns missing values in the dataset: {null_fields}")
 
     # What's the maximum fuel efficiency of cars from Asia?
-    # TODO: This is currently incorrect. Come back and fix this!!!
-    print(f"Maximum fuel efficiency of cars from Asia: {car_df.groupby('origin')['fuel_efficiency_mpg'].max()}")
+    filter_asia = car_df[car_df['origin'] == 'Asia']
+    print(f"Maximum fuel efficiency of cars from Asia: {filter_asia['fuel_efficiency_mpg'].max()}")
 
     '''
     *** Median value of horsepower ***
@@ -56,6 +56,7 @@ if __name__ == '__main__':
             Yes, it decreased
             No
     '''
+
 
     '''
     *** Linear Regression ***
