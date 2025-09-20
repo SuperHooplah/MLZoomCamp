@@ -1,4 +1,4 @@
-
+import numpy
 # You need to install Python, NumPy, Pandas, Matplotlib and Seaborn.
 # For that, you can use the instructions from 06-environment.md.
 
@@ -14,7 +14,7 @@ if __name__ == '__main__':
     print(f"Pandas Version: {pd.__version__}")
 
     '''
-    Read the provided CSV into the dataframe. It will have the following fields:
+    Read the provided CSV into the dataframe. It will have the following columns:
     engine_displacement: Integer
     num_cylinders: Float
     horsepower: Float
@@ -30,15 +30,15 @@ if __name__ == '__main__':
     car_df = pd.read_csv(filename)
 
     # How many records are in the dataset?
-    print(f"Number of records using df.shape: {car_df.shape[0]}") # df.shape[1] gets number of fields
+    print(f"Number of records using df.shape: {car_df.shape[0]}") # df.shape[1] gets number of columns
 
     # How many fuel types are presented in the dataset?
     print(f"Number of fuel types present: {car_df['fuel_type'].nunique()}")
 
     # How many columns in the dataset have missing values?
     # isnull returns a set of all the values in the dataframe, any() checks if any of them are null, sum() totals them.
-    null_fields = car_df.isnull().any().sum()
-    print(f"Number of columns missing values in the dataset: {null_fields}")
+    null_columns = car_df.isnull().any().sum()
+    print(f"Number of columns missing values in the dataset: {null_columns}")
 
     # What's the maximum fuel efficiency of cars from Asia?
     filter_asia = car_df[car_df['origin'] == 'Asia']
@@ -57,6 +57,21 @@ if __name__ == '__main__':
             No
     '''
 
+    print(f"Median horsepower of dataset before filling nulls: {car_df['horsepower'].median()}")
+    # The value that appears most in a dataset is the mode, we can grab that using pandas
+    most_freq_hp = car_df['horsepower'].mode()
+
+    # now, mode() will return a series because there might be more than one mode.
+
+    # we need to pick a value. We are going to delete any zeroes as they won't help
+    most_freq_hp = most_freq_hp[most_freq_hp != 0]
+
+    # After, we will take the average (mean) of the modes (but this is really for edge cases)
+    average_mode = most_freq_hp.mean()
+
+    # fill all null values on horsepower column
+    car_df['horsepower'] = car_df['horsepower'].fillna(average_mode)
+    print(f"Median horsepower of dataset after filling nulls: {car_df['horsepower'].median()}")
 
     '''
     *** Linear Regression ***
@@ -70,3 +85,13 @@ if __name__ == '__main__':
     8.) Multiply the inverse of XTX with the transpose of X, and then multiply the result by y. Call the result w.
     9.) What's the sum of all the elements of the result?
     '''
+
+    # we can just use our filter_asia df that we made earlier for step one
+    sub_df = filter_asia[['vehicle_weight', 'model_year']] # 2
+    array = sub_df.head(7).to_numpy() # 3 and 4
+    xtx = np.dot(array.T, array) # 5
+    inverted_xtx = np.linalg.inv(xtx) # 6
+    y = np.array([1100, 1300, 800, 900, 1000, 1100, 1200]) # 7
+    w = np.dot(np.dot(inverted_xtx, array.T), y) # 8
+    sum_of_all_results = np.sum(w) # 9
+    print(f"Sum of linear regression: {sum_of_all_results}")
